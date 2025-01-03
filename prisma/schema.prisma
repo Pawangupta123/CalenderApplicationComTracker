@@ -1,0 +1,46 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Company {
+  id                     String         @id @default(cuid())
+  name                   String
+  location               String
+  linkedinProfile        String
+  emails                 String[]
+  phoneNumbers           String[]
+  comments               String?
+  communicationPeriodicity Int
+  communications         Communication[]
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+}
+
+model CommunicationMethod {
+  id          String         @id @default(cuid())
+  name        String
+  description String
+  sequence    Int
+  isMandatory Boolean
+  communications Communication[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Communication {
+  id                   String               @id @default(cuid())
+  company              Company              @relation(fields: [companyId], references: [id])
+  companyId            String
+  communicationMethod  CommunicationMethod  @relation(fields: [communicationMethodId], references: [id])
+  communicationMethodId String
+  date                 DateTime
+  notes                String?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+}
+
